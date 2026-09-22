@@ -20,8 +20,8 @@ const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)];con
 
 let secretStep=0,audioCtx;
 async function chime(notes=[523.25,659.25,783.99]){try{audioCtx=audioCtx||new (window.AudioContext||window.webkitAudioContext)();if(audioCtx.state==='suspended')await audioCtx.resume();const now=audioCtx.currentTime;notes.forEach((f,i)=>{const o=audioCtx.createOscillator(),g=audioCtx.createGain();o.type='sine';o.frequency.value=f;g.gain.setValueAtTime(0,now+i*.11);g.gain.linearRampToValueAtTime(.06,now+i*.11+.02);g.gain.exponentialRampToValueAtTime(.001,now+i*.11+.28);o.connect(g).connect(audioCtx.destination);o.start(now+i*.11);o.stop(now+i*.11+.3)})}catch(e){}}
-if(localStorage.getItem('alayna-adventure-complete')==='yes')$('#secretPaw').classList.add('awake');
-$('#secretPaw').onclick=()=>{if(localStorage.getItem('alayna-adventure-complete')!=='yes')return;chime();show('#hiddenLevel')};
+$('#secretPaw').classList.add('awake');
+$('#secretPaw').onclick=async()=>{await chime();show('#hiddenLevel')};
 $('.rune').forEach(b=>b.onclick=()=>{const n=Number(b.dataset.step);if(n===secretStep+1){secretStep=n;b.classList.add('good');chime([440+n*80]);$('#runeMsg').textContent=secretStep<3?'Good eye. Keep following the trail…':'You found the whole trail.';if(secretStep===3)setTimeout(()=>{burst();show('#secretFinish')},650)}else{$('#runeMsg').textContent='Not quite. Curious minds try another path. ✨';secretStep=0;$('.rune').forEach(x=>x.classList.remove('good'))}});
 const originalMore=$('#more').onclick;$('#more').onclick=()=>{originalMore();localStorage.setItem('alayna-adventure-complete','yes');$('#secretPaw').classList.add('awake')};
 </script></body></html>
